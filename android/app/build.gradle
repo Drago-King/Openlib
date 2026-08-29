@@ -46,20 +46,6 @@ android {
         includeInBundle = false
     }
 
-    signingConfigs {
-        release {
-            // FIX: Use a conditional check (the Elvis operator ?: '') 
-            // to ensure 'file()' never gets a null or missing path string.
-            // This is the source of the path='null' error.
-            keyAlias = keystoreProperties['keyAlias']
-            keyPassword = keystoreProperties['keyPassword']
-            storeFile = file(keystoreProperties['storeFile'] ?: '') // <--- CRITICAL FIX
-            storePassword = keystoreProperties['storePassword']
-            v1SigningEnabled = true
-            v2SigningEnabled = true
-        }
-    } // Line 56 is near here, depending on your exact formatting
-
     buildTypes {
         release {
             // Revert to unconditional assignment. If storeFile is missing, 
