@@ -1,0 +1,78 @@
+// android/app/build.gradle
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// Load the Keystore Properties
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace = "com.app.openlib"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.app.openlib"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
+    signingConfigs {
+        release {
+            // FIX: Use a conditional check (the Elvis operator ?: '') 
+            // to ensure 'file()' never gets a null or missing path string.
+            // This is the source of the path='null' error.
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = file(keystoreProperties['storeFile'] ?: '') // <--- CRITICAL FIX
+            storePassword = keystoreProperties['storePassword']
+            v1SigningEnabled = true
+            v2SigningEnabled = true
+        }
+    } // Line 56 is near here, depending on your exact formatting
+
+    buildTypes {
+        release {
+            // Revert to unconditional assignment. If storeFile is missing, 
+            // Gradle will now error with "storeFile is missing required property", 
+            // which is clearer than the "path='null'" error.
+            signingConfig signingConfigs.release
+            
+            minifyEnabled = false
+            shrinkResources = false
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
