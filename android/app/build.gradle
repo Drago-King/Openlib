@@ -65,7 +65,7 @@ android {
             // Revert to unconditional assignment. If storeFile is missing, 
             // Gradle will now error with "storeFile is missing required property", 
             // which is clearer than the "path='null'" error.
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             
             minifyEnabled = false
             shrinkResources = false
